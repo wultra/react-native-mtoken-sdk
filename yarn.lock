@@ -11290,6 +11290,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"node-fetch@npm:>=2.6.1":
+  version: 3.3.2
+  resolution: "node-fetch@npm:3.3.2"
+  dependencies:
+    data-uri-to-buffer: ^4.0.0
+    fetch-blob: ^3.1.4
+    formdata-polyfill: ^4.0.10
+  checksum: 06a04095a2ddf05b0830a0d5302699704d59bda3102894ea64c7b9d4c865ecdff2d90fd042df7f5bc40337266961cb6183dcc808ea4f3000d024f422b462da92
+  languageName: node
+  linkType: hard
+
 "node-fetch@npm:^2.2.0, node-fetch@npm:^2.6.0, node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.12, node-fetch@npm:^2.6.7":
   version: 2.7.0
   resolution: "node-fetch@npm:2.7.0"
@@ -12540,6 +12551,7 @@ __metadata:
     react-dom: 18.2.0
     react-native: 0.74.5
     react-native-builder-bob: ^0.29.0
+    react-native-powerauth-mobile-sdk: ^2.5.1
     react-native-web: ~0.19.10
   languageName: unknown
   linkType: soft
@@ -12564,6 +12576,7 @@ __metadata:
     react: 18.2.0
     react-native: 0.74.5
     react-native-builder-bob: ^0.29.0
+    react-native-powerauth-mobile-sdk: ^2.5.1
     release-it: ^15.0.0
     typescript: ^5.2.2
   peerDependencies:
@@ -12571,6 +12584,17 @@ __metadata:
     react-native: "*"
   languageName: unknown
   linkType: soft
+
+"react-native-powerauth-mobile-sdk@npm:^2.5.1":
+  version: 2.5.1
+  resolution: "react-native-powerauth-mobile-sdk@npm:2.5.1"
+  dependencies:
+    node-fetch: ">=2.6.1"
+  peerDependencies:
+    react-native: "*"
+  checksum: a53c71b6d7b566fba08a5caf19c4a3ccaa6b197f5ea70912e1470bc096c80325d508bbca6fe34c28c7bbf517d3de844074851f62952ce1b68ef2266e002a71b0
+  languageName: node
+  linkType: hard
 
 "react-native-web@npm:~0.19.10":
   version: 0.19.12

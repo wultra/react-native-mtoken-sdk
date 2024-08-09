@@ -54,7 +54,7 @@
     "url": "git+https://github.com/wultra/react-native-mtoken-sdk.git"
   },
   "author": "Wultra <support@wultra.com> (https://wultra.com)",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/wultra/react-native-mtoken-sdk/issues"
   },
@@ -181,5 +181,8 @@
   "create-react-native-library": {
     "type": "library",
     "version": "0.40.0"
+  },
+  "dependencies": {
+    "react-native-powerauth-mobile-sdk": "^2.5.1"
   }
 }
