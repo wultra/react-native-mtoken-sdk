@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, Alert, Button } from 'react-native';
-import { MToken } from 'react-native-mtoken-sdk';
-import { PowerAuth, PowerAuthActivation, PowerAuthAuthentication, type PowerAuthActivationCode, type PowerAuthActivationStatus } from 'react-native-powerauth-mobile-sdk';
+import { MobileToken } from 'react-native-mtoken-sdk';
+import { PowerAuth, PowerAuthActivation, PowerAuthAuthentication, type PowerAuthActivationStatus } from 'react-native-powerauth-mobile-sdk';
 
 export default function App() {
 
   const powerAuth = new PowerAuth("test-instance");
-  const mtoken = new MToken(powerAuth);
+  const mtoken = new MobileToken(powerAuth);
   const pin = "1111";
 
   const [isActivated, setIsActivated] = useState<boolean | undefined>();
@@ -67,9 +67,13 @@ export default function App() {
       <Button title='Fetch operations' onPress={async () => {
         try {
           let result = await mtoken.operationList();
-          let jsonResult = JSON.stringify(result);
-          console.log(jsonResult);
-          Alert.alert(jsonResult);
+          console.log(JSON.stringify(result));
+          if (result.responseObject) {
+            Alert.alert(result.responseObject[0]?.formData.message ?? "no operations");
+          } else if (result.responseError) {
+            Alert.alert(`${result.responseError.code}`, `${result.responseError.message}`);
+          }
+
         } catch (err) {
           log(err);
         }
