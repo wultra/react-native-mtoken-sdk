@@ -14,6 +14,7 @@
 // and limitations under the License.
 //
 
+import { type MobileTokenOperation } from "./operations/MobileTokenOperation"
 import { type MobileTokenUserOperation } from "./operations/MobileTokenUserOperation"
 import { PowerAuth, PowerAuthAuthentication } from 'react-native-powerauth-mobile-sdk';
 
@@ -55,7 +56,7 @@ export class MobileToken {
    * Retrieves user operations from the server.
    * 
    * @param requestProcessor You may modify the request via this processor. It's highly recommended to only modify HTTP headers.
-   * @returns List of operations.
+   * @returns Server response (with list of operations).
    */
   async operationList(requestProcessor?: RequestProcessor): Promise<MobileTokenResponse<MobileTokenUserOperation[]>> {
     return await this.postSignedWithToken<MobileTokenUserOperation[]>(
@@ -69,21 +70,75 @@ export class MobileToken {
   }
 
   /**
-   * Retrieves specific operation from the server
+   * Retrieves operation detail based on operation ID
    * 
    * @param operationId ID of the operation
    * @param requestProcessor You may modify the request via this processor. It's highly recommended to only modify HTTP headers.
-   * @returns Operation detail.
+   * @returns Server response (with operation detail)
    */
   async operationDetail(operationId: string, requestProcessor?: RequestProcessor): Promise<MobileTokenResponse<MobileTokenUserOperation>> {
     return await this.postSignedWithToken<MobileTokenUserOperation>(
-      { requestObject: { id: operationId }},
+      { requestObject: { id: operationId } },
       PowerAuthAuthentication.possession(),
       "api/auth/token/app/operation/detail",
       "possession_universal",
       true,
       requestProcessor
     );
+  }
+
+  /**
+   * Authorize operation with given PowerAuth authentication object.
+   * 
+   * @param operation Operation to authorize
+   * @param authentication Authentication object
+   * @param requestProcessor You may modify the request via this processor. It's highly recommended to only modify HTTP headers.
+   * @returns Server response
+   */
+  async authorize(operation: MobileTokenOperation, authentication: PowerAuthAuthentication, requestProcessor?: RequestProcessor): Promise<MobileTokenResponse<void>> {
+    return await this.postSigned<void>(
+      { requestObject: { id: operation.id, data: operation.data } },
+      authentication,
+      "/api/auth/token/app/operation/authorize",
+      "/operation/authorize",
+      false,
+      requestProcessor
+    );
+  }
+
+  /**
+   * Reject operation with a reason.
+   * 
+   * @param operationId ID of the operation.
+   * @param reason Reason for the rejection.
+   * @param requestProcessor You may modify the request via this processor. It's highly recommended to only modify HTTP headers.
+   * @returns Server response
+   */
+  async reject(operationId: string, reason: "INCORRECT_DATA" | "UNEXPECTED_OPERATION" | "UNKNOWN" | string, requestProcessor?: RequestProcessor): Promise<MobileTokenResponse<void>> {
+    return await this.postSigned<void>(
+      { requestObject: { id: operationId, reason: reason } },
+      PowerAuthAuthentication.possession(),
+      "/api/auth/token/app/operation/cancel",
+      "/operation/cancel",
+      false,
+      requestProcessor
+    );
+  }
+
+  private async postSigned<T>(
+    requestData: any,
+    auth: PowerAuthAuthentication,
+    endpoindPath: string,
+    uriId: string,
+    returnDataExpected: boolean,
+    requestProcessor?: RequestProcessor
+  ): Promise<MobileTokenResponse<T>> {
+
+    let body = JSON.stringify(requestData);
+    let paHeader = await this.pa.requestSignature(auth, "POST", uriId, body);
+    let headers = new Headers();
+    headers.set(paHeader.key, paHeader.value);
+    return await this.post(JSON.stringify(requestData), endpoindPath, returnDataExpected, headers, requestProcessor);
   }
 
   private async postSignedWithToken<T>(
@@ -94,23 +149,36 @@ export class MobileToken {
     returnDataExpected: boolean,
     requestProcessor?: RequestProcessor
   ): Promise<MobileTokenResponse<T>> {
-    let method = "POST";
-    let url = this.baseURL + endpoindPath;
+
     let token = await this.pa.tokenStore.requestAccessToken(tokenName, auth);
     let paHeader = await this.pa.tokenStore.generateHeaderForToken(token.tokenName);
 
-    let jsonType = "application/json";
     let headers = new Headers();
+    headers.set(paHeader.key, paHeader.value);
+
+    return await this.post(JSON.stringify(requestData), endpoindPath, returnDataExpected, headers, requestProcessor);
+  }
+
+  private async post<T>(
+    requestSerialized: string,
+    endpoindPath: string,
+    returnDataExpected: boolean,
+    headers: Headers,
+    requestProcessor?: RequestProcessor
+  ): Promise<MobileTokenResponse<T>> {
+    let method = "POST";
+    let url = this.baseURL + endpoindPath;
+
+    let jsonType = "application/json";
     headers.set("Accept", jsonType);
     headers.set("Content-Type", jsonType);
     headers.set("Accept-Language", this.acceptLanguage);
     headers.set("User-Agent", "react-native-mtoken-sdk"); // TODO: improve!
-    headers.set(paHeader.key, paHeader.value);
 
     let request: RequestInit = {
       method: method,
       headers: headers,
-      body: JSON.stringify(requestData)
+      body: requestSerialized
     }
 
     if (requestProcessor) {
@@ -124,7 +192,7 @@ export class MobileToken {
         return new Date(value);
       }
       return value
-    }) as  MobileTokenResponse<T>;
+    }) as MobileTokenResponse<T>;
 
     console.log(response);
 

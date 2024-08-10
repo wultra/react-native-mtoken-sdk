@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, Alert, Button } from 'react-native';
-import { MobileToken } from 'react-native-mtoken-sdk';
+import { MobileToken, type MobileTokenOperationAttributeAmount } from 'react-native-mtoken-sdk';
 import { PowerAuth, PowerAuthActivation, PowerAuthAuthentication, type PowerAuthActivationStatus } from 'react-native-powerauth-mobile-sdk';
 
 export default function App() {
@@ -84,12 +84,50 @@ export default function App() {
           if (result.responseObject) {
             if (result.responseObject[0]) {
               let detail = await mtoken.operationDetail(result.responseObject[0].id);
-              Alert.alert("OperatioDetailMessage", detail.responseObject?.operationCreated.toLocaleString())
+              Alert.alert("OperatioDetailMessage", `${detail.responseObject?.operationCreated.toLocaleString()}\n${(detail.responseObject?.formData.attributes[0] as MobileTokenOperationAttributeAmount).amountFormatted}`)
             } else {
               Alert.alert("No operation in the list")
             }
           } else if (result.responseError) {
             Alert.alert(`${result.responseError.code}`, `${result.responseError.message}`);
+          }
+
+        } catch (err) {
+          log(err);
+        }
+      }} />
+      <Button title='Auhtorize first operation' onPress={async () => {
+        try {
+          let list = await mtoken.operationList();
+          console.log(JSON.stringify(list));
+          if (list.responseObject) {
+            if (list.responseObject[0]) {
+              let response= await mtoken.authorize(list.responseObject[0], PowerAuthAuthentication.password(pin));
+              Alert.alert("Authorize Result", `${response.status}`)
+            } else {
+              Alert.alert("No operation in the list")
+            }
+          } else if (list.responseError) {
+            Alert.alert(`${list.responseError.code}`, `${list.responseError.message}`);
+          }
+
+        } catch (err) {
+          log(err);
+        }
+      }} />
+      <Button title='Reject first operation' onPress={async () => {
+        try {
+          let list = await mtoken.operationList();
+          console.log(JSON.stringify(list));
+          if (list.responseObject) {
+            if (list.responseObject[0]) {
+              let response= await mtoken.reject(list.responseObject[0].id, "HELLO_FROM_REACT");
+              Alert.alert("Reject Result", `${response.status}`)
+            } else {
+              Alert.alert("No operation in the list")
+            }
+          } else if (list.responseError) {
+            Alert.alert(`${list.responseError.code}`, `${list.responseError.message}`);
           }
 
         } catch (err) {
