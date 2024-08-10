@@ -54,14 +54,32 @@ export class MobileToken {
   /**
    * Retrieves user operations from the server.
    * 
-   * @param requestProcessor When provided, you will get an option to modify or observer the request. It's highly recommended to only modify headers.
-   * @returns List of operations Promise.
+   * @param requestProcessor You may modify the request via this processor. It's highly recommended to only modify HTTP headers.
+   * @returns List of operations.
    */
   async operationList(requestProcessor?: RequestProcessor): Promise<MobileTokenResponse<MobileTokenUserOperation[]>> {
     return await this.postSignedWithToken<MobileTokenUserOperation[]>(
       {},
       PowerAuthAuthentication.possession(),
       "api/auth/token/app/operation/list",
+      "possession_universal",
+      true,
+      requestProcessor
+    );
+  }
+
+  /**
+   * Retrieves specific operation from the server
+   * 
+   * @param operationId ID of the operation
+   * @param requestProcessor You may modify the request via this processor. It's highly recommended to only modify HTTP headers.
+   * @returns Operation detail.
+   */
+  async operationDetail(operationId: string, requestProcessor?: RequestProcessor): Promise<MobileTokenResponse<MobileTokenUserOperation>> {
+    return await this.postSignedWithToken<MobileTokenUserOperation>(
+      { requestObject: { id: operationId }},
+      PowerAuthAuthentication.possession(),
+      "api/auth/token/app/operation/detail",
       "possession_universal",
       true,
       requestProcessor
@@ -86,7 +104,7 @@ export class MobileToken {
     headers.set("Accept", jsonType);
     headers.set("Content-Type", jsonType);
     headers.set("Accept-Language", this.acceptLanguage);
-    headers.set("User-Agent", "react-native-mtoken-sdk");
+    headers.set("User-Agent", "react-native-mtoken-sdk"); // TODO: improve!
     headers.set(paHeader.key, paHeader.value);
 
     let request: RequestInit = {
@@ -100,7 +118,13 @@ export class MobileToken {
     }
 
     let result = await fetch(url, request);
-    let response = await result.json() as MobileTokenResponse<T>;
+    let responseBody = await result.text()
+    let response = JSON.parse(responseBody, (key: string, value: any) => {
+      if (key == "operationExpires" || key == "operationCreated") {
+        return new Date(value);
+      }
+      return value
+    }) as  MobileTokenResponse<T>;
 
     console.log(response);
 
@@ -126,7 +150,7 @@ export class MobileTokenException {
   description: string;
   additionalData?: any;
   
-  constructor(description: string, additionalData: any | undefined = undefined) {
+  constructor(description: string, additionalData?: any) {
     this.description = description;
     this.additionalData = additionalData;
   }

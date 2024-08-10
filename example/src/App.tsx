@@ -73,6 +73,24 @@ export default function App() {
           } else if (result.responseError) {
             Alert.alert(`${result.responseError.code}`, `${result.responseError.message}`);
           }
+        } catch (err) {
+          log(err);
+        }
+      }} />
+      <Button title='Fetch operation detail' onPress={async () => {
+        try {
+          let result = await mtoken.operationList();
+          console.log(JSON.stringify(result));
+          if (result.responseObject) {
+            if (result.responseObject[0]) {
+              let detail = await mtoken.operationDetail(result.responseObject[0].id);
+              Alert.alert("OperatioDetailMessage", detail.responseObject?.operationCreated.toLocaleString())
+            } else {
+              Alert.alert("No operation in the list")
+            }
+          } else if (result.responseError) {
+            Alert.alert(`${result.responseError.code}`, `${result.responseError.message}`);
+          }
 
         } catch (err) {
           log(err);
