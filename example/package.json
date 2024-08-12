@@ -20,7 +20,8 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
-    "react-native-builder-bob": "^0.29.0"
+    "react-native-builder-bob": "^0.29.0",
+    "react-native-mtoken-sdk": "file://.."
   },
   "private": true
 }
