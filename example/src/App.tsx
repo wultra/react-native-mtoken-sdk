@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, Alert, Button } from 'react-native';
-import { MobileToken, type MobileTokenOperationAttributeAmount } from 'react-native-mtoken-sdk';
+import { MobileToken } from 'react-native-mtoken-sdk';
 import { PowerAuth, PowerAuthActivation, PowerAuthAuthentication, type PowerAuthActivationStatus } from 'react-native-powerauth-mobile-sdk';
 
 export default function App() {
@@ -24,10 +24,10 @@ export default function App() {
   const prepare = async (): Promise<void> => {
     if (!await powerAuth.isConfigured()) {
       await powerAuth.configure(
-        "gfv6saZiwmtOAMk9iD1xyg==",
-        "Pgd67vpBT6/Y+2fNBt7Sxg==",
-        "BFNObd28hFHYfdAgYgb6oK+LFlO69WEwLXaU4dxMoQFC+/dZOusMvkmTNahC8Os3aDhzRZP8+J3gw6irSEOROY4=",
-        "https://powerauth-dev.westeurope.cloudapp.azure.com/enrollment-server/",
+        "appKey",
+        "appSecret",
+        "masterPublicKey",
+        "https://yoururl.com/enrollment-server/",
         false
       )
     }
@@ -37,6 +37,8 @@ export default function App() {
     if (isActivated) {
       await updateStatus()
     }
+
+    mtoken.acceptLanguage = "cs";
   }
 
   const updateStatus = async () => {
@@ -67,9 +69,10 @@ export default function App() {
       <Button title='Fetch operations' onPress={async () => {
         try {
           let result = await mtoken.operationList();
-          console.log(JSON.stringify(result));
+          let json = JSON.stringify(result);
+          console.log(json);
           if (result.responseObject) {
-            Alert.alert(result.responseObject[0]?.formData.message ?? "no operations");
+            Alert.alert(json);
           } else if (result.responseError) {
             Alert.alert(`${result.responseError.code}`, `${result.responseError.message}`);
           }
@@ -84,7 +87,7 @@ export default function App() {
           if (result.responseObject) {
             if (result.responseObject[0]) {
               let detail = await mtoken.operationDetail(result.responseObject[0].id);
-              Alert.alert("OperatioDetailMessage", `${detail.responseObject?.operationCreated.toLocaleString()}\n${(detail.responseObject?.formData.attributes[0] as MobileTokenOperationAttributeAmount).amountFormatted}`)
+              Alert.alert("OperatioDetailMessage", `${detail.responseObject?.operationCreated.toLocaleString()}\n${detail.responseObject?.formData.title}`)
             } else {
               Alert.alert("No operation in the list")
             }
@@ -102,7 +105,7 @@ export default function App() {
           console.log(JSON.stringify(list));
           if (list.responseObject) {
             if (list.responseObject[0]) {
-              let response= await mtoken.authorize(list.responseObject[0], PowerAuthAuthentication.password(pin));
+              let response = await mtoken.authorize(list.responseObject[0], PowerAuthAuthentication.password(pin));
               Alert.alert("Authorize Result", `${response.status}`)
             } else {
               Alert.alert("No operation in the list")

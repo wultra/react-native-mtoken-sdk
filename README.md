@@ -1,5 +1,8 @@
 # Wultra Mobile Token SDK for React Native
 
+> [!WARNING]
+> The SDK is still in development!
+
 <!-- begin remove -->
 <p align="center"><img src="docs/images/intro.png" alt="Wultra Mobile Token SDK for React-Native" width="60%" /></p>
 
@@ -28,7 +31,7 @@ Remarks:
 
 ## Documentation
 
-The documentation will be available later...
+Brief [documentation is available here](docs) until until the initial development is finished.
 
 ## License
 
