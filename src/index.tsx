@@ -14,9 +14,10 @@
 // and limitations under the License.
 //
 
-import { type MobileTokenOperation } from "./operations/MobileTokenOperation"
-import { type MobileTokenUserOperation } from "./operations/MobileTokenUserOperation"
+import { type MobileTokenOperation } from './operations/MobileTokenOperation';
+import { type MobileTokenUserOperation } from './operations/MobileTokenUserOperation';
 import { PowerAuth, PowerAuthAuthentication } from 'react-native-powerauth-mobile-sdk';
+import { Platform } from 'react-native';
 
 export type RequestProcessor = (name: RequestInit) => RequestInit;
 
@@ -125,6 +126,31 @@ export class MobileToken {
     );
   }
 
+  /** 
+   * Registers the given powerauth activation for push notifications.
+   * 
+   * @param token Push token
+   * @param platform ios, android or huawei. When not specified, `Platform.OS` is used to determine if ios or android will be used. There is currently no automatic huawei platform detection.
+   * @param requestProcessor You may modify the request via this processor. It's highly recommended to only modify HTTP headers.
+   * @returns Server response
+   */
+  async registerForPush(token: string, platform?: "ios" | "android" | "huawei", requestProcessor?: RequestProcessor): Promise<MobileTokenResponse<void>> {
+
+    if (platform == undefined) {
+      // only
+      platform = Platform.OS == "ios" ? "ios" : "android";
+    }
+
+    return await this.postSignedWithToken<void>(
+      { requestObject: { token: token, platform: platform } },
+      PowerAuthAuthentication.possession(),
+      "/api/push/device/register/token",
+      "possession_universal",
+      false,
+      requestProcessor
+    );
+  }
+
   private async postSigned<T>(
     requestData: any,
     auth: PowerAuthAuthentication,
@@ -193,8 +219,6 @@ export class MobileToken {
       }
       return value
     }) as MobileTokenResponse<T>;
-
-    console.log(response);
 
     if (response.status == "ERROR") {
       if (response.responseObject == undefined) {

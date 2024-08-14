@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import * as Notifications from 'expo-notifications';
 import { StyleSheet, View, Text, Alert, Button } from 'react-native';
 import { MobileToken } from 'react-native-mtoken-sdk';
 import { PowerAuth, PowerAuthActivation, PowerAuthAuthentication, type PowerAuthActivationStatus } from 'react-native-powerauth-mobile-sdk';
@@ -132,6 +133,33 @@ export default function App() {
           } else if (list.responseError) {
             Alert.alert(`${list.responseError.code}`, `${list.responseError.message}`);
           }
+
+        } catch (err) {
+          log(err);
+        }
+      }} />
+      <Button title='Register for push' onPress={async () => {
+        try {
+          
+          let token;
+
+          const { status: existingStatus } = await Notifications.getPermissionsAsync();
+          let finalStatus = existingStatus;
+
+          if (existingStatus !== 'granted') {
+              const { status } = await Notifications.requestPermissionsAsync();
+              finalStatus = status;
+          }
+          if (finalStatus !== 'granted') {
+              alert('Failed to get push token for push notification!');
+              return;
+          }
+          token = (await Notifications.getDevicePushTokenAsync()).data;
+          console.log(`token: ${token}`);
+
+          let apiResult = await mtoken.registerForPush(token);
+
+          alert(JSON.stringify(apiResult));
 
         } catch (err) {
           log(err);
