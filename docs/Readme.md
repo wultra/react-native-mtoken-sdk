@@ -126,12 +126,12 @@ if (response.status == "OK") {
 }
 ```
 
-### Register for push notification
+### Register for push notifications
 
-Registering the device for the push notifications about operations that are tied to the current PowerAuth activation.
+Registering the device for the push notifications about operations tied to the current PowerAuth activation.
 
 > [!TIP]
-> It's recommended to call this method each start ot the app as the token might expire without any prior warning.
+> It's recommended to call this method at each app's start as the token might expire without any prior warning.
 
 #### Example
 
