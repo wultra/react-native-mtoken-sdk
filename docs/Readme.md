@@ -114,11 +114,48 @@ if (response.status == "OK") {
 
 Rejects an operation that is waiting for approval.
 
+#### Example
+
 ```ts
 let operationId = "your-operation-id";
-let response= await mtoken.reject(operationId, "INCORRECT_DATA");
+let response = await mtoken.reject(operationId, "INCORRECT_DATA");
 if (response.status == "OK") {
     // operation rejected
+} else {
+    // error - see response.responseError for more info
+}
+```
+
+### Register for push notification
+
+Registering the device for the push notifications about operations that are tied to the current PowerAuth activation.
+
+> [!TIP]
+> It's recommended to call this method each start ot the app as the token might expire without any prior warning.
+
+#### Example
+
+```ts
+// this example uses expo-notifications package
+import * as Notifications from 'expo-notifications';
+
+const { status: existingStatus } = await Notifications.getPermissionsAsync();
+let finalStatus = existingStatus;
+
+if (existingStatus !== 'granted') {
+    const { status } = await Notifications.requestPermissionsAsync();
+    finalStatus = status;
+}
+if (finalStatus !== 'granted') {
+    alert('Failed to get push token for push notification!');
+    return;
+}
+let token = (await Notifications.getDevicePushTokenAsync()).data;
+
+let response = await mtoken.registerForPush(token);
+
+if (response.status == "OK") {
+    // push registered
 } else {
     // error - see response.responseError for more info
 }

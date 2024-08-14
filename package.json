@@ -2,7 +2,7 @@
   "name": "react-native-mtoken-sdk",
   "version": "0.1.0",
   "description": "PowerAuth based Mobile Token SDK for React Native",
-  "source": ["./src/index.tsx", "./src/operations/*.ts"],
+  "source": "./src/index.tsx",
   "main": "./lib/commonjs/index.js",
   "module": "./lib/module/index.js",
   "exports": {
@@ -92,7 +92,7 @@
   "workspaces": [
     "example"
   ],
-  "packageManager": "yarn@3.6.1",
+  "packageManager": "yarn@4.4.0",
   "jest": {
     "preset": "react-native",
     "modulePathIgnorePatterns": [
