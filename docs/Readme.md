@@ -3,7 +3,7 @@
 > [!WARNING]
 > The SDK is still in development and not available in the npm. Full documentation will be available later.
 
-## Integraiton
+## Integration
 
 Add the SDK to your `package.json`:
 
