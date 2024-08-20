@@ -141,8 +141,6 @@ export default function App() {
       <Button title='Register for push' onPress={async () => {
         try {
           
-          let token;
-
           const { status: existingStatus } = await Notifications.getPermissionsAsync();
           let finalStatus = existingStatus;
 
@@ -154,7 +152,7 @@ export default function App() {
               alert('Failed to get push token for push notification!');
               return;
           }
-          token = (await Notifications.getDevicePushTokenAsync()).data;
+          let token = (await Notifications.getDevicePushTokenAsync()).data;
           console.log(`token: ${token}`);
 
           let apiResult = await mtoken.registerForPush(token);
