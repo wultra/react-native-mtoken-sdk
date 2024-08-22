@@ -23,6 +23,10 @@ import type { MobileTokenOperationAttribute } from "./MobileTokenOperationAttrib
  * the real-world operation (for example login or payment).
  */
 export interface MobileTokenUserOperation extends MobileTokenOperation {
+
+    /** Processing status of the operation */
+    status: "APPROVED" | "REJECTED" | "PENDING" | "CANCELED" | "EXPIRED" | "FAILED";
+
     /**
      * System name of the operation (for example login).
      * 

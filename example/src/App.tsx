@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import * as Notifications from 'expo-notifications';
 import { StyleSheet, View, Text, Alert, Button } from 'react-native';
-import { MobileToken } from 'react-native-mtoken-sdk';
+import { MobileToken, type MobileTokenUserOperation } from 'react-native-mtoken-sdk';
 import { PowerAuth, PowerAuthActivation, PowerAuthAuthentication, type PowerAuthActivationStatus } from 'react-native-powerauth-mobile-sdk';
 
 export default function App() {
@@ -88,7 +88,7 @@ export default function App() {
           if (result.responseObject) {
             if (result.responseObject[0]) {
               let detail = await mtoken.operationDetail(result.responseObject[0].id);
-              Alert.alert("OperatioDetailMessage", `${detail.responseObject?.operationCreated.toLocaleString()}\n${detail.responseObject?.formData.title}`)
+              Alert.alert("OperatioDetailMessage", `${detail.responseObject?.operationCreated.toLocaleString()}\n${detail.responseObject?.formData.title}\n${detail.responseObject?.status}`)
             } else {
               Alert.alert("No operation in the list")
             }
