@@ -262,7 +262,7 @@ export interface MobileTokenResponseError {
 }
 
 /** Known PowerAuth server error codes. */
-enum KnownRestApiError {
+export enum KnownRestApiError {
     
   // COMMON ERRORS
   
