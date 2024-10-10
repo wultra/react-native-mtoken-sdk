@@ -36,7 +36,6 @@
     "!**/.*"
   ],
   "scripts": {
-    "example": "yarn workspace react-native-mtoken-sdk-example",
     "test": "jest",
     "typecheck": "tsc",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
@@ -47,7 +46,8 @@
   "keywords": [
     "react-native",
     "ios",
-    "android"
+    "android",
+    "powerauth"
   ],
   "repository": {
     "type": "git",
@@ -89,9 +89,6 @@
     "react": "*",
     "react-native": "*"
   },
-  "workspaces": [
-    "example"
-  ],
   "packageManager": "yarn@4.4.0",
   "jest": {
     "preset": "react-native",
