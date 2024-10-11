@@ -100,7 +100,7 @@ export class MobileToken {
     return await this.postSigned<void>(
       { requestObject: { id: operation.id, data: operation.data } },
       authentication,
-      "/api/auth/token/app/operation/authorize",
+      "api/auth/token/app/operation/authorize",
       "/operation/authorize",
       false,
       requestProcessor
@@ -119,7 +119,7 @@ export class MobileToken {
     return await this.postSigned<void>(
       { requestObject: { id: operationId, reason: reason } },
       PowerAuthAuthentication.possession(),
-      "/api/auth/token/app/operation/cancel",
+      "api/auth/token/app/operation/cancel",
       "/operation/cancel",
       false,
       requestProcessor
@@ -144,7 +144,7 @@ export class MobileToken {
     return await this.postSignedWithToken<void>(
       { requestObject: { token: token, platform: platform } },
       PowerAuthAuthentication.possession(),
-      "/api/push/device/register/token",
+      "api/push/device/register/token",
       "possession_universal",
       false,
       requestProcessor
