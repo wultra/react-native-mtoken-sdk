@@ -1,7 +1,9 @@
 # Wultra Mobile Token SDK for React Native
 
 > [!WARNING]
-> The SDK is still in development!
+> This SDK has been replaced by the [mtoken-sdk-js](https://github.com/wultra/mtoken-sdk-js).
+> 
+> No development is planned, and it will be removed ~Q4 2025.
 
 <!-- begin remove -->
 <p align="center"><img src="docs/images/intro.png" alt="Wultra Mobile Token SDK for React-Native" width="60%" /></p>
